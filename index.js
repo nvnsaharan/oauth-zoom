@@ -117,11 +117,12 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
     }
     // Check to see if you received the event or not.
 
-    if (req.headers.authorization === config.VERIFICATION_TOKEN) {
+    if (req.headers.authorization === process.env.VERIFICATION_TOKEN) {
         res.status(200);
-
         console.log(event);
         res.send();
+    } else {
+        console.log("not matched!");
     }
 });
 
