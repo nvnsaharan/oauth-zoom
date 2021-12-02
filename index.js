@@ -107,9 +107,9 @@ app.get("/hello", (req, res) => {
     res.send("hello world!");
 });
 
-app.get("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
+app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
     let event;
-
+    console.log("Webinar Ended Webhook Recieved.");
     try {
         event = JSON.parse(req.body);
     } catch (err) {
@@ -119,7 +119,7 @@ app.get("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
 
     if (req.headers.authorization === config.VERIFICATION_TOKEN) {
         res.status(200);
-        console.log("Webinar Ended Webhook Recieved.");
+
         console.log(event);
         res.send();
     }
