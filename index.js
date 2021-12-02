@@ -107,8 +107,8 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/event", (req, res) => {
-    body = JSON.parse(body);
-    console.log(body);
+    body = JSON.parse(res.body);
+    console.log("body", body);
 });
 
 const port = process.env.PORT || 4000;
