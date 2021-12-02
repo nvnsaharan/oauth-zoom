@@ -6,6 +6,7 @@ const request = require("request");
 
 // Run the express app
 const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
 
 app.get("/", (req, res) => {
@@ -106,9 +107,22 @@ app.get("/hello", (req, res) => {
     res.send("hello world!");
 });
 
-app.get("/event", (req, res) => {
-    body = JSON.parse(res.body);
-    console.log("body", body);
+app.get("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
+    let event;
+
+    try {
+        event = JSON.parse(req.body);
+    } catch (err) {
+        res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    // Check to see if you received the event or not.
+
+    if (req.headers.authorization === config.VERIFICATION_TOKEN) {
+        res.status(200);
+        console.log("Webinar Ended Webhook Recieved.");
+        console.log(event);
+        res.send();
+    }
 });
 
 const port = process.env.PORT || 4000;
