@@ -111,7 +111,7 @@ app.get("/event", (req, res) => {
     console.log(body);
 });
 
-const port = process.env.PORT;
+const port = process.env.PORT || 4000;
 
 app.listen(port, () =>
     console.log(`Zoom Hello World app listening at PORT: ${port}`)
