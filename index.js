@@ -113,6 +113,8 @@ app.get("/hello", (req, res) => {
     res.send("hello world!");
 });
 
+//  https://api.zoom.us/v2/
+
 app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
     let event;
     console.log("Webinar Ended Webhook Recieved.");
