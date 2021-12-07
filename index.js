@@ -3,11 +3,17 @@ require("dotenv/config");
 
 // Use the request module to make HTTP requests from Node
 const request = require("request");
+var path = require("path");
 
 // Run the express app
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/views"));
+app.use(express.static(__dirname + "/static"));
 
 app.get("/", (req, res) => {
     // Step 1:
@@ -115,7 +121,6 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
     } catch (err) {
         res.status(400).send(`Webhook Error: ${err.message}`);
     }
-    // Check to see if you received the event or not.
 
     if (req.headers.authorization === process.env.VERIFICATION_TOKEN) {
         res.status(200);
@@ -124,6 +129,10 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
     } else {
         console.log("not matched!");
     }
+});
+
+app.get("/live", (req, res) => {
+    res.render("live");
 });
 
 const port = process.env.PORT || 4000;
