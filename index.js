@@ -45,8 +45,7 @@ app.get("/", (req, res) => {
         request
             .post(url, async (error, response, body) => {
                 body = JSON.parse(body);
-                console.log(`access_token: ${body.access_token}`);
-                // console.log("ckjdhvdsdv")
+                console.log(body);
                 if (body.access_token) {
                     console.log("ckjdhvdsdv");
                     const SAVE = {
@@ -58,8 +57,8 @@ app.get("/", (req, res) => {
 
                     console.log(SAVE);
 
-                    const docRef = db.collection("users");
-                    await docRef.add(SAVE);
+                    // const docRef = db.collection("users");
+                    // await docRef.add(SAVE);
                     request
                         .get(
                             "https://api.zoom.us/v2/users/me",
