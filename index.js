@@ -46,12 +46,15 @@ app.get("/", (req, res) => {
                                     console.log("API Response Error: ", error);
                                 } else {
                                     apiresponse = JSON.parse(apiresponse);
-                                    console.log(apiresponse);
+
                                     const SAVE = {
                                         id: apiresponse.id,
                                         account_id: apiresponse.account_id,
                                         access_token: body.access_token,
                                         refresh_token: body.refresh_token,
+                                        first_name: body.first_name,
+                                        last_name: body.last_name,
+                                        email: body.email,
                                     };
 
                                     const docRef = db.collection("users");
