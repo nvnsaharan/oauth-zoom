@@ -123,11 +123,15 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
         if (event.event == "meeting.ended") {
             console.log("do api call for recordings.");
 
-            const quary = db
-                .collection("users")
-                .where("account_id", "==", event.payload.account_id);
-
-            console.log(quary);
+            const ref = db.collection("users");
+            ref.where("account_id", "==", event.payload.account_id)
+                .get()
+                .then(function (query) {
+                    if (query.size > 0) {
+                        const data = query.docs[0].data();
+                        console.log(data);
+                    }
+                });
             // /meetings/{meetingId}/recordings
         }
         res.send();
