@@ -64,8 +64,8 @@ app.get("/", (req, res) => {
 
                                     console.log(SAVE);
 
-                                    // const docRef = db.collection("users");
-                                    // await docRef.add(SAVE);
+                                    const docRef = db.collection("users");
+                                    await docRef.add(SAVE);
                                     res.send("LOGED IN");
                                 }
                             }
