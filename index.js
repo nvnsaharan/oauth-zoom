@@ -124,12 +124,28 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
             console.log("do api call for recordings.");
 
             const ref = db.collection("users");
+            let data;
             ref.where("account_id", "==", event.payload.account_id)
                 .get()
                 .then(function (query) {
                     if (query.size > 0) {
-                        const data = query.docs[0].data();
-                        console.log(data);
+                        data = query.docs[0].data();
+                        request
+                            .get(
+                                `https://api.zoom.us/v2/meetings/${event.payload.object.id}/recordings`,
+                                async (error, response, apiresponse) => {
+                                    if (error) {
+                                        console.log(
+                                            "API Response Error: ",
+                                            error
+                                        );
+                                    } else {
+                                        apiresponse = JSON.parse(apiresponse);
+                                        console.log(apiresponse);
+                                    }
+                                }
+                            )
+                            .auth(null, null, true, data.access_token);
                     }
                 });
             // /meetings/{meetingId}/recordings
