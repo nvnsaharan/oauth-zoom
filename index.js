@@ -1,14 +1,33 @@
 // Bring in environment secrets through dotenv
 require("dotenv/config");
-
-// Use the request module to make HTTP requests from Node
 const request = require("request");
-var path = require("path");
-
-// Run the express app
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
+const {
+    initializeApp,
+    applicationDefault,
+    cert,
+} = require("firebase-admin/app");
+const {
+    getFirestore,
+    Timestamp,
+    FieldValue,
+} = require("firebase-admin/firestore");
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCGb7l_1O_ALf9TKnG_MU5BwnYNpOpsmDo",
+    authDomain: "mycounterappp.firebaseapp.com",
+    projectId: "mycounterappp",
+    storageBucket: "mycounterappp.appspot.com",
+    messagingSenderId: "882388031250",
+    appId: "1:882388031250:web:0f7a5dc3c4d617d1e2c5cb",
+};
 const app = express();
+
+initializeApp(firebaseConfig);
+
+const db = getFirestore();
 
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
@@ -16,15 +35,7 @@ app.set("views", path.join(__dirname, "/views"));
 app.use(express.static(__dirname + "/static"));
 
 app.get("/", (req, res) => {
-    // Step 1:
-    // Check if the code parameter is in the url
-    // if an authorization code is available, the user has most likely been redirected from Zoom OAuth
-    // if not, the user needs to be redirected to Zoom OAuth to authorize
-
     if (req.query.code) {
-        // Step 3:
-        // Request an access token using the auth code
-
         let url =
             "https://zoom.us/oauth/token?grant_type=authorization_code&code=" +
             req.query.code +
@@ -33,22 +44,22 @@ app.get("/", (req, res) => {
 
         request
             .post(url, (error, response, body) => {
-                // Parse response to JSON
                 body = JSON.parse(body);
-                console.log(body);
-
-                // Logs your access and refresh tokens in the browser
                 console.log(`access_token: ${body.access_token}`);
-                console.log(`refresh_token: ${body.refresh_token}`);
-
+                // console.log("ckjdhvdsdv")
                 if (body.access_token) {
-                    // Step 4:
-                    // We can now use the access token to authenticate API calls
+                    console.log("ckjdhvdsdv");
+                    const SAVE = {
+                        id: body.id,
+                        account_id: body.account_id,
+                        access_token: body.access_token,
+                        refresh_token: body.refresh_token,
+                    };
 
-                    // Send a request to get your user information using the /me context
-                    // The `/me` context restricts an API call to the user the token belongs to
-                    // This helps make calls to user-specific endpoints instead of storing the userID
+                    console.log(SAVE);
 
+                    const docRef = db.collection("users");
+                    await docRef.add(SAVE);
                     request
                         .get(
                             "https://api.zoom.us/v2/users/me",
@@ -57,9 +68,7 @@ app.get("/", (req, res) => {
                                     console.log("API Response Error: ", error);
                                 } else {
                                     body = JSON.parse(body);
-                                    // Display response in console
                                     console.log("API call ", body);
-                                    // Display response in browser
                                     var JSONResponse =
                                         "<pre><code>" +
                                         JSON.stringify(body, null, 2) +
@@ -91,7 +100,6 @@ app.get("/", (req, res) => {
                         )
                         .auth(null, null, true, body.access_token);
                 } else {
-                    // Handle errors, something's gone wrong!
                 }
             })
             .auth(process.env.clientID, process.env.clientSecret);
@@ -99,8 +107,6 @@ app.get("/", (req, res) => {
         return;
     }
 
-    // Step 2:
-    // If no authorization code is available, redirect to Zoom OAuth to authorize
     res.redirect(
         "https://zoom.us/oauth/authorize?response_type=code&client_id=" +
             process.env.clientID +
@@ -127,6 +133,31 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
     if (req.headers.authorization === process.env.VERIFICATION_TOKEN) {
         res.status(200);
         console.log(event);
+
+        // {
+        //    event: 'meeting.ended',
+        //    payload: {
+        //  account_id: 'R5SjAl7LRFSVhp8viBp7bg',
+        //  object: {
+        //    duration: 0,
+        //    start_time: '2021-12-07T15:29:25Z',
+        //    timezone: '',
+        //    end_time: '2021-12-07T15:38:52Z',
+        //    topic: "Naveen Saharan's Zoom Meeting",
+        //    id: '89312688007',
+        //    type: 1,
+        //    uuid: 'bTuD/7TCRPqztQG/wiPENw==',
+        //    host_id: 'jbX_o7E7RxS1Ov0TToNypg'
+        //  }
+        //    },
+        //    event_ts: 1638891532732
+        //  }
+
+        if (event.event == "meeting.ended") {
+            console.log("do api call for recordings.");
+
+            // /meetings/{meetingId}/recordings
+        }
         res.send();
     } else {
         console.log("not matched!");
