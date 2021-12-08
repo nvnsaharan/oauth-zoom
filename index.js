@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
             process.env.redirectURL;
 
         request
-            .post(url, (error, response, body) => {
+            .post(url, async (error, response, body) => {
                 body = JSON.parse(body);
                 console.log(`access_token: ${body.access_token}`);
                 // console.log("ckjdhvdsdv")
