@@ -4,30 +4,21 @@ const request = require("request");
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
-const {
-    initializeApp,
-    applicationDefault,
-    cert,
-} = require("firebase-admin/app");
-const {
-    getFirestore,
-    Timestamp,
-    FieldValue,
-} = require("firebase-admin/firestore");
+const firebase = require("firebase");
+require("firebase/firestore");
 
-const firebaseConfig = {
+const app = express();
+
+firebase.initializeApp({
     apiKey: "AIzaSyCGb7l_1O_ALf9TKnG_MU5BwnYNpOpsmDo",
     authDomain: "mycounterappp.firebaseapp.com",
     projectId: "mycounterappp",
     storageBucket: "mycounterappp.appspot.com",
     messagingSenderId: "882388031250",
     appId: "1:882388031250:web:0f7a5dc3c4d617d1e2c5cb",
-};
-const app = express();
+});
 
-initializeApp(firebaseConfig);
-
-const db = getFirestore();
+var db = firebase.firestore();
 
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
