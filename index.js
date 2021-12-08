@@ -58,7 +58,9 @@ app.get("/", (req, res) => {
                                     };
 
                                     const docRef = db.collection("users");
-                                    await docRef.add(SAVE);
+                                    await docRef
+                                        .doc(apiresponse.account_id)
+                                        .set(SAVE, { merge: true });
                                     res.send("LOGED IN");
                                 }
                             }
