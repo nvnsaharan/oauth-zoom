@@ -52,9 +52,9 @@ app.get("/", (req, res) => {
                                         account_id: apiresponse.account_id,
                                         access_token: body.access_token,
                                         refresh_token: body.refresh_token,
-                                        first_name: body.first_name,
-                                        last_name: body.last_name,
-                                        email: body.email,
+                                        first_name: apiresponse.first_name,
+                                        last_name: apiresponse.last_name,
+                                        email: apiresponse.email,
                                     };
 
                                     const docRef = db.collection("users");
