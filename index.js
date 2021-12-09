@@ -149,14 +149,12 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                             },
                             async function (error, response) {
                                 if (error) throw new Error(error);
-                                console.log(response);
-                                const lastresponse = JSON.parse(response);
+                                console.log(response.body);
+                                const lastresponse = JSON.parse(response.body);
 
                                 const SAVE = {
-                                    access_token:
-                                        lastresponse.body.access_token,
-                                    refresh_token:
-                                        lastresponse.body.refresh_token,
+                                    access_token: lastresponse.access_token,
+                                    refresh_token: lastresponse.refresh_token,
                                 };
 
                                 const docRef = db.collection("users");
@@ -215,7 +213,7 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                                         null,
                                         null,
                                         true,
-                                        response.body.access_token
+                                        response.access_token
                                     );
                             }
                         );
