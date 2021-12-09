@@ -149,11 +149,9 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                             },
                             async function (error, response) {
                                 if (error) throw new Error(error);
-                                const lastresponse = response;
-                                console.log(
-                                    lastresponse.body,
-                                    lastresponse.body.access_token
-                                );
+                                console.log(response);
+                                const lastresponse = JSON.parse(response);
+
                                 const SAVE = {
                                     access_token:
                                         lastresponse.body.access_token,
