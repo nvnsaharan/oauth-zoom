@@ -36,7 +36,7 @@ app.get("/", (req, res) => {
         request
             .post(url, (error, response, body) => {
                 body = JSON.parse(body);
-                console.log("Caaling 2");
+                console.log(body.access_token);
                 if (body.access_token) {
                     request
                         .get(
