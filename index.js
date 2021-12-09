@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
             req.query.code +
             "&redirect_uri=" +
             process.env.redirectURL;
-
+        res.send("Caaling");
         request
             .post(url, (error, response, body) => {
                 body = JSON.parse(body);
@@ -45,6 +45,8 @@ app.get("/", (req, res) => {
                                 if (error) {
                                     console.log("API Response Error: ", error);
                                 } else {
+                                    res.send("LOGED IN");
+
                                     apiresponse = JSON.parse(apiresponse);
 
                                     const SAVE = {
@@ -56,12 +58,11 @@ app.get("/", (req, res) => {
                                         last_name: apiresponse.last_name,
                                         email: apiresponse.email,
                                     };
-
+                                    console.log(SAVE);
                                     const docRef = db.collection("users");
                                     await docRef
                                         .doc(apiresponse.account_id)
                                         .set(SAVE, { merge: true });
-                                    res.send("LOGED IN");
                                 }
                             }
                         )
