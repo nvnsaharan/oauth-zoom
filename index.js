@@ -164,15 +164,20 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                                                         db.collection(
                                                             "meeting"
                                                         );
-                                                    console.log(apiresponse);
                                                     const SAVE = {
                                                         meeting_id:
                                                             event.payload.object
                                                                 .id,
+                                                        account_id:
+                                                            event.payload
+                                                                .account_id,
                                                         response: apiresponse,
                                                     };
                                                     await docRef
-                                                        .doc(85889298178)
+                                                        .doc(
+                                                            event.payload.object
+                                                                .id
+                                                        )
                                                         .set(SAVE, {
                                                             merge: true,
                                                         });
