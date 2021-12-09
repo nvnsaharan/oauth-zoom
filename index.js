@@ -46,8 +46,6 @@ app.get("/", (req, res) => {
                                     console.log("API Response Error: ", error);
                                 } else {
                                     res.send("LOGED IN");
-
-                                    console.log(apiresponse);
                                     apiresponse = JSON.parse(apiresponse);
 
                                     const SAVE = {
