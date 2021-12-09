@@ -149,7 +149,6 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                             },
                             async function (error, response) {
                                 if (error) throw new Error(error);
-                                console.log(response.body);
                                 const lastresponse = JSON.parse(response.body);
 
                                 const SAVE = {
@@ -213,7 +212,7 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                                         null,
                                         null,
                                         true,
-                                        response.access_token
+                                        lastresponse.access_token
                                     );
                             }
                         );
