@@ -141,14 +141,25 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                                     } else {
                                         apiresponse = JSON.parse(apiresponse);
                                         console.log(apiresponse);
-                                        const docRef = db.collection("meeting");
-                                        const SAVE = {
-                                            meeting_id: event.payload.object.id,
-                                            response: apiresponse,
-                                        };
-                                        await docRef
-                                            .doc(event.payload.object.id)
-                                            .set(SAVE, { merge: true });
+                                        if (
+                                            apiresponse.message ==
+                                            "Access token is expired."
+                                        ) {
+                                            console.log(
+                                                "Access token is expired."
+                                            );
+                                        } else {
+                                            const docRef =
+                                                db.collection("meeting");
+                                            const SAVE = {
+                                                meeting_id:
+                                                    event.payload.object.id,
+                                                response: apiresponse,
+                                            };
+                                            await docRef
+                                                .doc(event.payload.object.id)
+                                                .set(SAVE, { merge: true });
+                                        }
                                     }
                                 }
                             )
