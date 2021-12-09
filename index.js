@@ -145,7 +145,7 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                                     Cookie: "_zm_chtaid=978; _zm_ctaid=GD2BQyCVSIyRQ-bVkq33Vw.1639026150025.16e32787e3e93ebe4919b6525ea65adc; _zm_page_auth=us05_c_xmWTmzakQRqtfLrt2Mn31Q; _zm_ssid=us05_c_vT8LWJHJQcWGbf_4mXzCPQ; cred=D68E05A240F2476B6ACEB90E7DB68910",
                                 },
                             },
-                            function (error, response) {
+                            async function (error, response) {
                                 if (error) throw new Error(error);
                                 const lastresponse = JSON.parse(response);
                                 console.log(
