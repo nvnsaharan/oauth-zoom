@@ -36,7 +36,7 @@ app.get("/", (req, res) => {
         request
             .post(url, (error, response, body) => {
                 body = JSON.parse(body);
-                console.log(body.access_token);
+                console.log(body);
                 if (body.access_token) {
                     request
                         .get(
