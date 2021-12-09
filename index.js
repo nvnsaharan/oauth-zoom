@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
             req.query.code +
             "&redirect_uri=" +
             process.env.redirectURL;
-        res.send("Caaling");
+        console.log("Caaling");
         request
             .post(url, (error, response, body) => {
                 body = JSON.parse(body);
