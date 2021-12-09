@@ -47,6 +47,7 @@ app.get("/", (req, res) => {
                                 } else {
                                     res.send("LOGED IN");
 
+                                    console.log(apiresponse);
                                     apiresponse = JSON.parse(apiresponse);
 
                                     const SAVE = {
@@ -58,7 +59,7 @@ app.get("/", (req, res) => {
                                         last_name: apiresponse.last_name,
                                         email: apiresponse.email,
                                     };
-                                    console.log(SAVE);
+
                                     const docRef = db.collection("users");
                                     await docRef
                                         .doc(apiresponse.account_id)
@@ -84,12 +85,6 @@ app.get("/", (req, res) => {
     );
 });
 
-app.get("/hello", (req, res) => {
-    res.send("hello world!");
-});
-
-//  https://api.zoom.us/v2/
-
 app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
     let event;
     try {
@@ -101,25 +96,6 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
     if (req.headers.authorization === process.env.VERIFICATION_TOKEN) {
         res.status(200);
         console.log(event.event);
-
-        // {
-        //    event: 'meeting.ended',
-        //    payload: {
-        //  account_id: 'R5SjAl7LRFSVhp8viBp7bg',
-        //  object: {
-        //    duration: 0,
-        //    start_time: '2021-12-07T15:29:25Z',
-        //    timezone: '',
-        //    end_time: '2021-12-07T15:38:52Z',
-        //    topic: "Naveen Saharan's Zoom Meeting",
-        //    id: '89312688007',
-        //    type: 1,
-        //    uuid: 'bTuD/7TCRPqztQG/wiPENw==',
-        //    host_id: 'jbX_o7E7RxS1Ov0TToNypg'
-        //  }
-        //    },
-        //    event_ts: 1638891532732
-        //  }
 
         if (event.event == "meeting.ended") {
             console.log("do api call for recordings.");
