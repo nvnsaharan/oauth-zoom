@@ -137,7 +137,8 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
 
                                 request
                                     .get(
-                                        `https://api.zoom.us/v2/meetings/${event.payload.object.id}/recordings`,
+                                        `https://api.zoom.us/v2/meetings/82768997236/recordings`,
+                                        // `https://api.zoom.us/v2/meetings/${event.payload.object.id}/recordings`,
                                         async (
                                             error,
                                             response,
@@ -165,9 +166,8 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                                                             "meeting"
                                                         );
                                                     const SAVE = {
-                                                        meeting_id:
-                                                            event.payload.object
-                                                                .id,
+                                                        meeting_id: 82768997236,
+                                                        // event.payload.object.id,
                                                         response: apiresponse,
                                                     };
                                                     await docRef
