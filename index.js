@@ -137,7 +137,7 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
 
                                 request
                                     .get(
-                                        `https://api.zoom.us/v2/meetings/82768997236/recordings`,
+                                        `https://api.zoom.us/v2/meetings/85889298178/recordings`,
                                         // `https://api.zoom.us/v2/meetings/${event.payload.object.id}/recordings`,
                                         async (
                                             error,
@@ -165,16 +165,14 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
                                                         db.collection(
                                                             "meeting"
                                                         );
+                                                    console.log(apiresponse);
                                                     const SAVE = {
-                                                        meeting_id: 82768997236,
+                                                        meeting_id: 85889298178,
                                                         // event.payload.object.id,
                                                         response: apiresponse,
                                                     };
                                                     await docRef
-                                                        .doc(
-                                                            event.payload.object
-                                                                .id
-                                                        )
+                                                        .doc(85889298178)
                                                         .set(SAVE, {
                                                             merge: true,
                                                         });
