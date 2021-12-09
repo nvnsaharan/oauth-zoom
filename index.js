@@ -68,6 +68,7 @@ app.get("/", (req, res) => {
                         )
                         .auth(null, null, true, body.access_token);
                 } else {
+                    res.send("LOGED OUTTTTTTTTTTTTTT");
                 }
             })
             .auth(process.env.clientID, process.env.clientSecret);
