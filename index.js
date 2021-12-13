@@ -95,106 +95,108 @@ app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
         res.status(200);
         console.log(event.event);
 
-        if (event.event == "meeting.ended") {
-            console.log("do api call for recordings.");
+        if (event.event == "recording.completed") {
+            console.log(
+                `${event.payload.object.recording_files[0].download_url}/?access_token=${event.download_token}`
+            );
 
-            const ref = db.collection("users");
-            let data;
-            ref.where("account_id", "==", event.payload.account_id)
-                .get()
-                .then(function (query) {
-                    if (query.size > 0) {
-                        data = query.docs[0].data();
+            // const ref = db.collection("users");
+            // let data;
+            // ref.where("account_id", "==", event.payload.account_id)
+            //     .get()
+            //     .then(function (query) {
+            //         if (query.size > 0) {
+            //             data = query.docs[0].data();
 
-                        request(
-                            {
-                                method: "POST",
-                                url: `https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token=${data.refresh_token}`,
-                                headers: {
-                                    Authorization: `Basic ${Buffer.from(
-                                        process.env.clientID +
-                                            ":" +
-                                            process.env.clientSecret
-                                    ).toString("base64")}`,
-                                    "Content-Type":
-                                        "application/x-www-form-urlencoded",
-                                    Cookie: "_zm_chtaid=978; _zm_ctaid=GD2BQyCVSIyRQ-bVkq33Vw.1639026150025.16e32787e3e93ebe4919b6525ea65adc; _zm_page_auth=us05_c_xmWTmzakQRqtfLrt2Mn31Q; _zm_ssid=us05_c_vT8LWJHJQcWGbf_4mXzCPQ; cred=D68E05A240F2476B6ACEB90E7DB68910",
-                                },
-                            },
-                            async function (error, response) {
-                                if (error) throw new Error(error);
-                                const lastresponse = JSON.parse(response.body);
+            //             request(
+            //                 {
+            //                     method: "POST",
+            //                     url: `https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token=${data.refresh_token}`,
+            //                     headers: {
+            //                         Authorization: `Basic ${Buffer.from(
+            //                             process.env.clientID +
+            //                                 ":" +
+            //                                 process.env.clientSecret
+            //                         ).toString("base64")}`,
+            //                         "Content-Type":
+            //                             "application/x-www-form-urlencoded",
+            //                         Cookie: "_zm_chtaid=978; _zm_ctaid=GD2BQyCVSIyRQ-bVkq33Vw.1639026150025.16e32787e3e93ebe4919b6525ea65adc; _zm_page_auth=us05_c_xmWTmzakQRqtfLrt2Mn31Q; _zm_ssid=us05_c_vT8LWJHJQcWGbf_4mXzCPQ; cred=D68E05A240F2476B6ACEB90E7DB68910",
+            //                     },
+            //                 },
+            //                 async function (error, response) {
+            //                     if (error) throw new Error(error);
+            //                     const lastresponse = JSON.parse(response.body);
 
-                                const SAVE = {
-                                    access_token: lastresponse.access_token,
-                                    refresh_token: lastresponse.refresh_token,
-                                };
+            //                     const SAVE = {
+            //                         access_token: lastresponse.access_token,
+            //                         refresh_token: lastresponse.refresh_token,
+            //                     };
 
-                                const docRef = db.collection("users");
-                                await docRef
-                                    .doc(data.account_id)
-                                    .set(SAVE, { merge: true });
+            //                     const docRef = db.collection("users");
+            //                     await docRef
+            //                         .doc(data.account_id)
+            //                         .set(SAVE, { merge: true });
 
-                                request
-                                    .get(
-                                        `https://api.zoom.us/v2/meetings/${event.payload.object.id}/recordings`,
-                                        async (
-                                            error,
-                                            response,
-                                            apiresponse
-                                        ) => {
-                                            if (error) {
-                                                console.log(
-                                                    "API Response Error: ",
-                                                    error
-                                                );
-                                            } else {
-                                                apiresponse =
-                                                    JSON.parse(apiresponse);
-                                                console.log(apiresponse);
-                                                if (
-                                                    apiresponse.message ==
-                                                    "Access token is expired."
-                                                ) {
-                                                    console.log(
-                                                        "Access token is expired."
-                                                    );
-                                                } else {
-                                                    const docRef =
-                                                        db.collection(
-                                                            "meeting"
-                                                        );
-                                                    const SAVE = {
-                                                        meeting_id:
-                                                            event.payload.object
-                                                                .id,
-                                                        account_id:
-                                                            event.payload
-                                                                .account_id,
-                                                        response: apiresponse,
-                                                    };
-                                                    await docRef
-                                                        .doc(
-                                                            event.payload.object
-                                                                .id
-                                                        )
-                                                        .set(SAVE, {
-                                                            merge: true,
-                                                        });
-                                                }
-                                            }
-                                        }
-                                    )
-                                    .auth(
-                                        null,
-                                        null,
-                                        true,
-                                        lastresponse.access_token
-                                    );
-                            }
-                        );
-                    }
-                });
+            //                     request
+            //                         .get(
+            //                             `https://api.zoom.us/v2/meetings/${event.payload.object.id}/recordings`,
+            //                             async (
+            //                                 error,
+            //                                 response,
+            //                                 apiresponse
+            //                             ) => {
+            //                                 if (error) {
+            //                                     console.log(
+            //                                         "API Response Error: ",
+            //                                         error
+            //                                     );
+            //                                 } else {
+            //                                     apiresponse =
+            //                                         JSON.parse(apiresponse);
+            //                                     console.log(apiresponse);
+            //                                     if (
+            //                                         apiresponse.message ==
+            //                                         "Access token is expired."
+            //                                     ) {
+            //                                         console.log(
+            //                                             "Access token is expired."
+            //                                         );
+            //                                     } else {
+            //                                         const docRef =
+            //                                             db.collection(
+            //                                                 "meeting"
+            //                                             );
+            //                                         const SAVE = {
+            //                                             meeting_id:
+            //                                                 event.payload.object
+            //                                                     .id,
+            //                                             account_id:
+            //                                                 event.payload
+            //                                                     .account_id,
+            //                                             response: apiresponse,
+            //                                         };
+            //                                         await docRef
+            //                                             .doc(
+            //                                                 event.payload.object
+            //                                                     .id
+            //                                             )
+            //                                             .set(SAVE, {
+            //                                                 merge: true,
+            //                                             });
+            //                                     }
+            //                                 }
+            //                             }
+            //                         )
+            //                         .auth(
+            //                             null,
+            //                             null,
+            //                             true,
+            //                             lastresponse.access_token
+            //                         );
+            //                 }
+            //             );
+            //         }
+            //     });
         }
         res.send();
     } else {
