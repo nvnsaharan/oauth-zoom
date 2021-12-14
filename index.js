@@ -106,7 +106,11 @@ app.post(
 
                 const docRef = db.collection("recording");
                 console.log(event.payload.object.id);
-                await docRef.doc(event.payload.object.id).set(event.payload, {
+                const SAVE = {
+                    meeting_Id: event.payload.object.id,
+                    payload: event.payload,
+                };
+                await docRef.doc(event.payload.object.id).set(SAVE, {
                     merge: true,
                 });
 
