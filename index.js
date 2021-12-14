@@ -108,7 +108,7 @@ app.post(
                 console.log(event.payload.object.id);
                 const SAVE = {
                     meeting_Id: event.payload.object.id,
-                    payload: event.payload,
+                    payload: event,
                 };
                 await docRef.doc(event.payload.object.id).set(SAVE, {
                     merge: true,
@@ -272,6 +272,25 @@ app.get("/meeting/:meeting", (req, res) => {
             }
         });
 });
+
+// setTimeout(async () => {
+//     console.log("object");
+//     const events = {
+//         payload: {
+//             id: "6484313546",
+//             name: "dksbvbsd",
+//         },
+//     };
+//     const docRef = db.collection("recording");
+//     console.log(events.payload.id);
+//     const SAVE = {
+//         meeting_Id: events.payload.id,
+//         payload: events.payload,
+//     };
+//     await docRef.doc(events.payload.id).set(SAVE, {
+//         merge: true,
+//     });
+// }, 3000);
 
 const port = process.env.PORT || 4000;
 
