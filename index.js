@@ -102,11 +102,11 @@ app.post(
 
             if (event.event == "recording.completed") {
                 const yourUrl = `${event.payload.object.recording_files[0].download_url}/?access_token=${event.download_token}`;
-                console.log(yourUrl);
+                console.log("yourUrl");
 
                 const docRef = db.collection("recording");
-
-                await docRef.doc(event.payload.object.id).set(event, {
+                console.log(event.payload.object.id);
+                await docRef.doc(event.payload.object.id).set(event.payload, {
                     merge: true,
                 });
 
