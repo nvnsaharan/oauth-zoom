@@ -110,7 +110,7 @@ app.post(
                     meeting_Id: event.payload.object.id,
                     payload: event,
                 };
-                await docRef.doc(event.payload.object.id).set(SAVE, {
+                await docRef.add(SAVE, {
                     merge: true,
                 });
 
