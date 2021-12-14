@@ -85,34 +85,44 @@ app.get("/", (req, res) => {
     );
 });
 
-app.post("/event", bodyParser.raw({ type: "application/json" }), (req, res) => {
-    let event;
-    try {
-        event = JSON.parse(req.body);
-    } catch (err) {
-        res.status(400).send(`Webhook Error: ${err.message}`);
-    }
-
-    if (req.headers.authorization === process.env.VERIFICATION_TOKEN) {
-        res.status(200);
-        console.log(event.event);
-
-        if (event.event == "recording.completed") {
-            const yourUrl = `${event.payload.object.recording_files[0].download_url}/?access_token=${event.download_token}`;
-            console.log(yourUrl);
-
-            // const response = await fetch(yourUrl);
-            // const buffer = await response.buffer();
-
-            // fs.writeFile(`./videos/name.mp4`, buffer, () =>
-            //     console.log("finished downloading video!")
-            // );
+app.post(
+    "/event",
+    bodyParser.raw({ type: "application/json" }),
+    async (req, res) => {
+        let event;
+        try {
+            event = JSON.parse(req.body);
+        } catch (err) {
+            res.status(400).send(`Webhook Error: ${err.message}`);
         }
-        res.send();
-    } else {
-        console.log("not matched!");
+
+        if (req.headers.authorization === process.env.VERIFICATION_TOKEN) {
+            res.status(200);
+            console.log(event.event);
+
+            if (event.event == "recording.completed") {
+                const yourUrl = `${event.payload.object.recording_files[0].download_url}/?access_token=${event.download_token}`;
+                console.log(yourUrl);
+
+                const docRef = db.collection("recording");
+
+                await docRef.doc(event.payload.object.id).set(event, {
+                    merge: true,
+                });
+
+                // const response = await fetch(yourUrl);
+                // const buffer = await response.buffer();
+
+                // fs.writeFile(`./videos/name.mp4`, buffer, () =>
+                //     console.log("finished downloading video!")
+                // );
+            }
+            res.send();
+        } else {
+            console.log("not matched!");
+        }
     }
-});
+);
 
 app.get("/meeting/:meeting", (req, res) => {
     const meeting_id = req.params.meeting;
