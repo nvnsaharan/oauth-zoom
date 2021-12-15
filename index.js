@@ -129,9 +129,11 @@ app.post(
                     meeting_id: event.payload.object.id,
                     account_id: event.payload.account_id,
                 };
-                await meetingRef.doc(meeting_id).set(meeting_data, {
-                    merge: true,
-                });
+                await meetingRef
+                    .doc(event.payload.object.id)
+                    .set(meeting_data, {
+                        merge: true,
+                    });
             }
             res.send();
         } else {
