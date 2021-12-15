@@ -27,6 +27,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 app.use(express.static(__dirname + "/static"));
 
+// for oauth
 app.get("/", (req, res) => {
     if (req.query.code) {
         let url =
@@ -50,6 +51,7 @@ app.get("/", (req, res) => {
                                     res.send("LOGED IN");
                                     apiresponse = JSON.parse(apiresponse);
 
+                                    // save the access_token and refresh_token for accessing the data next time
                                     const SAVE = {
                                         id: apiresponse.id,
                                         account_id: apiresponse.account_id,
@@ -85,6 +87,7 @@ app.get("/", (req, res) => {
     );
 });
 
+// for all the events we added
 app.post(
     "/event",
     bodyParser.raw({ type: "application/json" }),
@@ -102,10 +105,17 @@ app.post(
 
             if (event.event == "recording.completed") {
                 const yourUrl = `${event.payload.object.recording_files[0].download_url}/?access_token=${event.download_token}`;
-                console.log("yourUrl");
+                // use this URL to directly download the recording
+                console.log(yourUrl);
+
+                // const response = await fetch(yourUrl);
+                // const buffer = await response.buffer();
+
+                // fs.writeFile(`./videos/name.mp4`, buffer, () =>
+                //     console.log("finished downloading video!")
+                // );
 
                 const docRef = db.collection("recording");
-                console.log(event.payload.object.id);
                 const SAVE = {
                     meeting_Id: event.payload.object.id,
                     payload: event,
@@ -114,12 +124,14 @@ app.post(
                     merge: true,
                 });
 
-                // const response = await fetch(yourUrl);
-                // const buffer = await response.buffer();
-
-                // fs.writeFile(`./videos/name.mp4`, buffer, () =>
-                //     console.log("finished downloading video!")
-                // );
+                const meetingRef = db.collection("meeting");
+                const meeting_data = {
+                    meeting_id: event.payload.object.id,
+                    account_id: event.payload.account_id,
+                };
+                await meetingRef.doc(meeting_id).set(meeting_data, {
+                    merge: true,
+                });
             }
             res.send();
         } else {
@@ -128,7 +140,7 @@ app.post(
     }
 );
 
-// meeting_Id
+// https://my-zoom-apps.herokuapp.com/recording/81037856340
 
 app.get("/recording/:meeting", (req, res) => {
     let meeting_id = req.params.meeting;
@@ -165,6 +177,8 @@ app.get("/recording/:meeting", (req, res) => {
     }
 });
 
+// https://my-zoom-apps.herokuapp.com/meeting/82575550044
+
 app.get("/meeting/:meeting", (req, res) => {
     const meeting_id = req.params.meeting;
 
@@ -182,6 +196,7 @@ app.get("/meeting/:meeting", (req, res) => {
                         if (query.size > 0) {
                             data = query.docs[0].data();
 
+                            // request to refresh the access token as token expires after 1 hr
                             request(
                                 {
                                     method: "POST",
@@ -214,6 +229,7 @@ app.get("/meeting/:meeting", (req, res) => {
                                         .doc(data.account_id)
                                         .set(SAVE, { merge: true });
 
+                                    // request recordings using APIs and meeting id
                                     request
                                         .get(
                                             `https://api.zoom.us/v2/meetings/${meeting_id}/recordings`,
