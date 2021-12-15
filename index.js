@@ -311,22 +311,6 @@ app.get("/meeting/:meeting", (req, res) => {
                 res.send("no such meeting");
             }
         });
-
-    db.collection("meeting")
-        .where("meeting_id", "==", meeting_id)
-        .get()
-        .then(function (query) {
-            if (query.size > 0) {
-                const data = query.docs[0].data();
-                console.log(data);
-                var JSONResponse =
-                    "<pre><code>" +
-                    JSON.stringify(data, null, 2) +
-                    "</code></pre>";
-            } else {
-                res.send("no such meeting");
-            }
-        });
 });
 
 const port = process.env.PORT || 4000;
