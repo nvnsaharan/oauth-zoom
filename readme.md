@@ -10,3 +10,9 @@
 8. recording.completed event will trigger after the meeting ends.
 
 9. Meeting recording URLs (using APIs) wont be available just after meeting it take time to save the files. So its better to look for URLs after 2-3 mins.
+
+# to use this repo
+
+1. Clone the repo
+2. Do "npm i" make sure nodejs is installed.
+3. look for the routes in index.js
