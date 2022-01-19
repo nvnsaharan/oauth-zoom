@@ -7,9 +7,13 @@ const bodyParser = require("body-parser");
 const firebase = require("firebase");
 const fetch = require("node-fetch");
 const fs = require("fs");
+const crypto = require('crypto')
+const cors = require('cors')
 require("firebase/firestore");
 
 const app = express();
+app.use(bodyParser.json(), cors())
+app.options('*', cors());
 
 firebase.initializeApp({
     apiKey: "AIzaSyCGb7l_1O_ALf9TKnG_MU5BwnYNpOpsmDo",
@@ -316,6 +320,18 @@ app.get("/meeting/:meeting", (req, res) => {
 });
 
 const port = process.env.PORT || 4000;
+
+app.post('/signature', (req, res) => {
+    
+    const timestamp = new Date().getTime() - 30000
+    const msg = Buffer.from(process.env.ZOOM_JWT_API_KEY + req.body.meetingNumber + timestamp + req.body.role).toString('base64')
+    const hash = crypto.createHmac('sha256', process.env.ZOOM_JWT_API_SECRET).update(msg).digest('base64')
+    const signature = Buffer.from(`${process.env.ZOOM_JWT_API_KEY}.${req.body.meetingNumber}.${timestamp}.${req.body.role}.${hash}`).toString('base64')
+  
+    res.json({
+      signature: signature
+    })
+  })
 
 app.listen(port, () =>
     console.log(`Zoom Hello World app listening at PORT: ${port}`)
